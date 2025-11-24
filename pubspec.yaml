@@ -1,0 +1,37 @@
+name: medify_app
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Firebase core (required for all Firebase services)
+  firebase_core: ^3.3.0
+  
+  firebase_auth: ^5.3.1
+
+  # Firestore database
+  cloud_firestore: ^5.4.4
+
+  # Notificaciones locales
+  flutter_local_notifications: ^17.2.2
+
+  # Zona horaria (requerido para programación exacta)
+  timezone: ^0.9.3
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
