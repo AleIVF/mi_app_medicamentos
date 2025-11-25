@@ -3,14 +3,16 @@ class Medication {
   String name;
   String dosage;
   String time;
-  bool taken; // Nuevo campo
+  bool taken;
+  List<DateTime> history; // ← AGREGADO
 
   Medication({
     required this.id,
     required this.name,
     required this.dosage,
     required this.time,
-    this.taken = false, // default false
+    this.taken = false,
+    this.history = const [], // ← DEFAULT VACÍO
   });
 
   Map<String, dynamic> toMap() {
@@ -19,6 +21,7 @@ class Medication {
       'dosage': dosage,
       'time': time,
       'taken': taken,
+      'history': history.map((h) => h.toIso8601String()).toList(), 
     };
   }
 
@@ -29,6 +32,10 @@ class Medication {
       dosage: data['dosage'] ?? '',
       time: data['time'] ?? '',
       taken: data['taken'] ?? false,
+      history: (data['history'] as List<dynamic>? ?? [])
+          .map((h) => DateTime.parse(h))
+          .toList(),
     );
   }
 }
+
