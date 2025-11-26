@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // ===== DRAWER =====
+
       drawer: Drawer(
         child: ListView(
           children: [
@@ -44,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
 
-      // ===== APPBAR CON BUSCADOR =====
       appBar: AppBar(
         title: isSearching
             ? TextField(
@@ -77,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
 
-      // ===== LISTA =====
+      //list
       body: StreamBuilder<List<Medication>>(
         stream: repo.getMedications(),
         builder: (context, snapshot) {
@@ -120,7 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
 
-      // ===== FAB =====
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {

@@ -6,7 +6,7 @@ class MedicationRepository {
   final _db = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
 
-  // ✅ Obtener medicamentos en tiempo real
+  // Obtener medicamentos en tiempo real
   Stream<List<Medication>> getMedications() {
     final uid = _auth.currentUser!.uid;
 
@@ -23,7 +23,7 @@ class MedicationRepository {
     });
   }
 
-  // ✅ Agregar medicamento
+  // Agregar medicamento
   Future<void> addMedication(Medication med) async {
     final uid = _auth.currentUser!.uid;
 
@@ -34,7 +34,7 @@ class MedicationRepository {
         .add(med.toMap());
   }
 
-  // ✅ Actualizar medicamento (incluye "taken")
+  // Actualizar medicamento 
   Future<void> updateMedication(Medication med) async {
     final uid = _auth.currentUser!.uid;
 
@@ -46,7 +46,7 @@ class MedicationRepository {
         .update(med.toMap());
   }
 
-  // ✅ Eliminar medicamento
+  //Eliminar medicamento
   Future<void> deleteMedication(String id) async {
     final uid = _auth.currentUser!.uid;
 

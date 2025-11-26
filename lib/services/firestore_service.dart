@@ -7,7 +7,7 @@ class FirestoreService {
 
   String get userId => AuthService().currentUser!.uid;
 
-  // ===== OBTENER MEDICAMENTOS =====
+  //OBTENER MEDICAMENTOS 
   Stream<List<Medication>> getMedications() {
     return _db
         .collection('users')
@@ -26,7 +26,6 @@ class FirestoreService {
     });
   }
 
-  // ===== AGREGAR =====
   Future<void> addMedication(Medication med) {
     return _db
         .collection('users')
@@ -35,7 +34,7 @@ class FirestoreService {
         .add(med.toMap());
   }
 
-  // ===== ACTUALIZAR =====
+  //ACTUALIZAR 
   Future<void> updateMedication(Medication med) {
     return _db
         .collection('users')
@@ -45,7 +44,7 @@ class FirestoreService {
         .update(med.toMap());
   }
 
-  // ===== ELIMINAR =====
+  //ELIMINAR 
   Future<void> deleteMedication(String id) {
     return _db
         .collection('users')

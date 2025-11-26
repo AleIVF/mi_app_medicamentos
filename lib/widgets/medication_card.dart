@@ -30,7 +30,7 @@ class MedicationCard extends StatelessWidget {
         trailing: Wrap(
           spacing: 6,
           children: [
-            // ✅ PALOMITA VERDE
+            // PALOMITA
             IconButton(
               icon: Icon(
                 Icons.check_circle,
@@ -49,7 +49,7 @@ class MedicationCard extends StatelessWidget {
               },
             ),
 
-            // ✏️ EDITAR
+            //EDITAR
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.blueGrey),
               onPressed: () {
@@ -62,7 +62,7 @@ class MedicationCard extends StatelessWidget {
               },
             ),
 
-            // 🗑️ ELIMINAR
+            // ELIMINAR
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.redAccent),
               onPressed: () async {
