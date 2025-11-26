@@ -1,10 +1,9 @@
 class Medication {
-  String id;
-  String name;
-  String dosage;
-  String time;
-  bool taken;
-  List<DateTime> history; // ← AGREGADO
+  final String id;
+  final String name;
+  final String dosage;
+  final String time;
+  final bool taken;
 
   Medication({
     required this.id,
@@ -12,7 +11,6 @@ class Medication {
     required this.dosage,
     required this.time,
     this.taken = false,
-    this.history = const [], // ← DEFAULT VACÍO
   });
 
   Map<String, dynamic> toMap() {
@@ -21,21 +19,16 @@ class Medication {
       'dosage': dosage,
       'time': time,
       'taken': taken,
-      'history': history.map((h) => h.toIso8601String()).toList(), 
     };
   }
 
-  factory Medication.fromMap(String id, Map<String, dynamic> data) {
+  factory Medication.fromMap(String id, Map<String, dynamic> map) {
     return Medication(
       id: id,
-      name: data['name'] ?? '',
-      dosage: data['dosage'] ?? '',
-      time: data['time'] ?? '',
-      taken: data['taken'] ?? false,
-      history: (data['history'] as List<dynamic>? ?? [])
-          .map((h) => DateTime.parse(h))
-          .toList(),
+      name: map['name'] ?? '',
+      dosage: map['dosage'] ?? '',
+      time: map['time'] ?? '',
+      taken: map['taken'] ?? false,
     );
   }
 }
-

@@ -10,153 +10,107 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailCtrl = TextEditingController();
-  final _passCtrl = TextEditingController();
-  bool _loading = false;
+  final auth = AuthService();
+  final email = TextEditingController();
+  final password = TextEditingController();
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: const Color(0xFFF6FBFA),
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.medical_services,
+                  size: 80, color: Colors.teal),
+              const SizedBox(height: 16),
 
-                // Ícono y título
-                const Icon(Icons.medical_services_rounded,
-                    size: 90, color: Color(0xFF1EC8A5)),
-                const SizedBox(height: 12),
-                const Text(
-                  'Medify',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF333333),
-                  ),
+              const Text(
+                '¡Bienvenido a Medify!',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
                 ),
-                const SizedBox(height: 30),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Tu asistente para recordar tus medicamentos',
+                style: TextStyle(fontSize: 15, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
 
-                // Tarjeta con sombra
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // Email Input
-                      TextField(
-                        controller: _emailCtrl,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          labelText: 'Correo electrónico',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                      ),
+              const SizedBox(height: 30),
 
-                      const SizedBox(height: 16),
-
-                      // Password Input
-                      TextField(
-                        controller: _passCtrl,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          labelText: 'Contraseña',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // Botón moderno
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            backgroundColor: const Color(0xFF1EC8A5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          onPressed: _loading
-                              ? null
-                              : () async {
-                                  setState(() => _loading = true);
-                                  try {
-                                    await AuthService().login(
-                                      _emailCtrl.text.trim(),
-                                      _passCtrl.text.trim(),
-                                    );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text('Error: $e'),
-                                          backgroundColor: Colors.redAccent),
-                                    );
-                                  } finally {
-                                    setState(() => _loading = false);
-                                  }
-                                },
-                          child: _loading
-                              ? const SizedBox(
-                                  height: 22,
-                                  width: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : const Text(
-                                  'Iniciar sesión',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
+              TextField(
+                controller: email,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.email),
+                  labelText: 'Correo electrónico',
                 ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: password,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.lock),
+                  labelText: 'Contraseña',
+                ),
+              ),
 
-                const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-                // Crear cuenta (texto)
-                TextButton(
-                  onPressed: () => Navigator.push(
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () async {
+                    try {
+                      await auth.login(
+                        email.text.trim(),
+                        password.text.trim(),
+                      );
+                    } catch (e) {
+                      setState(() {
+                        error = 'Correo o contraseña incorrectos';
+                      });
+                    }
+                  },
+                  child: const Text('Iniciar sesión',
+                      style: TextStyle(fontSize: 16)),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              if (error.isNotEmpty)
+                Text(error,
+                    style: const TextStyle(color: Colors.red, fontSize: 14)),
+
+              const SizedBox(height: 20),
+
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (_) => const RegisterScreen()),
-                  ),
-                  child: const Text(
-                    'Crear cuenta',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Color(0xFF1EC8A5),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+                  );
+                },
+                child: const Text('¿No tienes cuenta? Regístrate'),
+              ),
+            ],
           ),
         ),
       ),

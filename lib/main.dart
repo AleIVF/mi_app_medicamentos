@@ -1,32 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest.dart' as tz;
-
-import 'screens/auth_wrapper.dart'; // ← ya lo usabas
-// (si aún no lo tienes, te lo entrego cuando me digas)
-
-final FlutterLocalNotificationsPlugin notificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+import 'screens/auth_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializar zona horaria (obligatorio para notificaciones programadas)
-  tz.initializeTimeZones();
-
-  // Configuración Android
-  const AndroidInitializationSettings androidSettings =
-      AndroidInitializationSettings('@mipmap/ic_launcher');
-
-  const InitializationSettings initSettings =
-      InitializationSettings(android: androidSettings);
-
-  // Inicializar notificaciones
-  await notificationsPlugin.initialize(initSettings);
-
-  // Inicializar Firebase
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -41,11 +20,19 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Medify App',
+      title: 'Medify',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
+        scaffoldBackgroundColor: const Color(0xFFF6FBFA),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.teal,
+          elevation: 0,
+        ),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.teal,
+        ),
       ),
-      home: const AuthWrapper(), // no cambió nada
+      home: const AuthWrapper(),
     );
   }
 }

@@ -9,150 +9,116 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final _emailCtrl = TextEditingController();
-  final _passCtrl = TextEditingController();
-  final _nameCtrl = TextEditingController();
-
-  bool _loading = false;
+  final auth = AuthService();
+  final email = TextEditingController();
+  final password = TextEditingController();
+  final confirmPassword = TextEditingController();
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: const Color(0xFFF6FBFA),
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFFF6F6F6),
-        foregroundColor: Colors.black87,
-        title: const Text(
-          "Crear cuenta",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        backgroundColor: Colors.teal,
+        title: const Text('Crear cuenta'),
       ),
-
       body: Center(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-            child: Column(
-              children: [
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              const Icon(Icons.medical_services,
+                  size: 70, color: Colors.teal),
+              const SizedBox(height: 16),
 
-                // Título
-                const Text(
-                  "Crea tu cuenta para empezar",
-                  style: TextStyle(
+              const Text(
+                'Crea tu cuenta en Medify',
+                style: TextStyle(
                     fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.teal),
+              ),
+              const SizedBox(height: 6),
+              const Text(
+                'Empieza a controlar tus medicamentos fácilmente',
+                style: TextStyle(color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 30),
+
+              TextField(
+                controller: email,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.email),
+                  labelText: 'Correo electrónico',
                 ),
-                const SizedBox(height: 28),
+              ),
+              const SizedBox(height: 16),
 
-                // Tarjeta
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      // Nombre
-                      TextField(
-                        controller: _nameCtrl,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person_outline),
-                          labelText: 'Nombre completo',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14)),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Email
-                      TextField(
-                        controller: _emailCtrl,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          labelText: 'Correo electrónico',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14)),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Password
-                      TextField(
-                        controller: _passCtrl,
-                        obscureText: true,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          labelText: 'Contraseña',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14)),
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-
-                      // Botón Registrarse
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            backgroundColor: const Color(0xFF1EC8A5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                          onPressed: _loading
-                              ? null
-                              : () async {
-                                  setState(() => _loading = true);
-                                  try {
-                                    await AuthService().register(
-                                      _emailCtrl.text.trim(),
-                                      _passCtrl.text.trim(),
-                                    );
-
-                                    Navigator.pop(context);
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(SnackBar(
-                                      content: Text('Error: $e'),
-                                      backgroundColor: Colors.redAccent,
-                                    ));
-                                  } finally {
-                                    setState(() => _loading = false);
-                                  }
-                                },
-                          child: _loading
-                              ? const SizedBox(
-                                  height: 22,
-                                  width: 22,
-                                  child: CircularProgressIndicator(
-                                      strokeWidth: 2, color: Colors.white),
-                                )
-                              : const Text(
-                                  'Registrarse',
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                        ),
-                      )
-                    ],
-                  ),
+              TextField(
+                controller: password,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.lock),
+                  labelText: 'Contraseña',
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 16),
+
+              TextField(
+                controller: confirmPassword,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.lock_outline),
+                  labelText: 'Confirmar contraseña',
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () async {
+                    if (password.text != confirmPassword.text) {
+                      setState(() {
+                        error = 'Las contraseñas no coinciden';
+                      });
+                      return;
+                    }
+
+                    try {
+                      await auth.register(
+                        email.text.trim(),
+                        password.text.trim(),
+                      );
+                      Navigator.pop(context);
+                    } catch (e) {
+                      setState(() {
+                        error = 'Error al registrar usuario';
+                      });
+                    }
+                  },
+                  child: const Text('Registrarse',
+                      style: TextStyle(fontSize: 16)),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              if (error.isNotEmpty)
+                Text(error,
+                    style: const TextStyle(color: Colors.red, fontSize: 14))
+            ],
           ),
         ),
       ),

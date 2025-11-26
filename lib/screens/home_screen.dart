@@ -5,33 +5,79 @@ import '../widgets/medication_card.dart';
 import 'add_edit_medication.dart';
 import '../services/auth_service.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-  final repo = MedicationRepository();
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final MedicationRepository repo = MedicationRepository();
+  final TextEditingController searchController = TextEditingController();
+
+  bool isSearching = false;
+  String search = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff2f6f5),
-
-      appBar: AppBar(
-        title: const Text(
-          'Mis Medicamentos',
-          style: TextStyle(fontWeight: FontWeight.bold),
+      // ===== DRAWER =====
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            const DrawerHeader(
+              decoration: BoxDecoration(color: Colors.teal),
+              child: Text(
+                'Medify',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.logout),
+              title: const Text('Cerrar sesión'),
+              onTap: () async {
+                await AuthService().logout();
+              },
+            ),
+          ],
         ),
-        backgroundColor: Colors.teal,
-        elevation: 0,
+      ),
+
+      // ===== APPBAR CON BUSCADOR =====
+      appBar: AppBar(
+        title: isSearching
+            ? TextField(
+                controller: searchController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Buscar medicamento...',
+                  border: InputBorder.none,
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    search = value.toLowerCase();
+                  });
+                },
+              )
+            : const Text('Mis Medicamentos'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await AuthService().logout();
+            icon: Icon(isSearching ? Icons.close : Icons.search),
+            onPressed: () {
+              setState(() {
+                if (isSearching) {
+                  searchController.clear();
+                  search = '';
+                }
+                isSearching = !isSearching;
+              });
             },
-          ),
+          )
         ],
       ),
 
+      // ===== LISTA =====
       body: StreamBuilder<List<Medication>>(
         stream: repo.getMedications(),
         builder: (context, snapshot) {
@@ -39,33 +85,48 @@ class HomeScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No hay medicamentos'));
           }
 
-          final meds = snapshot.data ?? [];
-          if (meds.isEmpty) {
-            return const Center(
-              child: Text("No hay medicamentos aún.",
-                  style: TextStyle(fontSize: 16)),
-            );
-          }
+          final all = snapshot.data!;
+          final filtered = all
+              .where((m) => m.name.toLowerCase().contains(search))
+              .toList();
 
-          return ListView.builder(
+          final pendientes = filtered.where((m) => !m.taken).toList();
+          final tomados = filtered.where((m) => m.taken).toList();
+
+          return ListView(
             padding: const EdgeInsets.all(16),
-            itemCount: meds.length,
-            itemBuilder: (_, i) => MedicationCard(med: meds[i]),
+            children: [
+              const Text(
+                'Medicamentos pendientes',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              ...pendientes.map((m) => MedicationCard(med: m)),
+
+              const SizedBox(height: 24),
+
+              const Text(
+                'Medicamentos tomados',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              ...tomados.map((m) => MedicationCard(med: m)),
+            ],
           );
         },
       ),
 
+      // ===== FAB =====
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.teal,
         child: const Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => AddEditMedication()),
+            MaterialPageRoute(builder: (_) => const AddEditMedication()),
           );
         },
       ),
